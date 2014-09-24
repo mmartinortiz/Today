@@ -1,2 +1,7 @@
 Today
 =====
+
+Dependencies
+============
+
+libenchant-dev
