@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>hicolor/16x16/apps/today.png</file>
+        <file>hicolor/22x22/apps/today.png</file>
+        <file>hicolor/32x32/apps/today.png</file>
+        <file>hicolor/64x64/apps/today.png</file>
+        <file>hicolor/128x128/apps/today.png</file>
+        <file>hicolor/scalable/apps/today.svg</file>
+        <file>oxygen/application-exit.png</file>
+        <file>oxygen/configure.png</file>
+        <file>oxygen/document-save.png</file>
+        <file>oxygen/help-about.png</file>
+        <file>oxygen/text-calendar.png</file>
+        <file>oxygen/tools-check-spelling.png</file>
+    </qresource>
+</RCC>

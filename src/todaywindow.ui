@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TodayWindow</class>
+ <widget class="QMainWindow" name="TodayWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>580</width>
+    <height>394</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TodayWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/icons/icons.qrc">
+    <normaloff>:/hicolor/16x16/apps/today.png</normaloff>:/hicolor/16x16/apps/today.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QToolButton" name="dateSelector">
+        <property name="toolTip">
+         <string>Select Date</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/icons/icons.qrc">
+          <normaloff>:/oxygen/text-calendar.png</normaloff>:/oxygen/text-calendar.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="saveButton">
+        <property name="toolTip">
+         <string>Save</string>
+        </property>
+        <property name="text">
+         <string>Save (Ctrl + S)</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/icons/icons.qrc">
+          <normaloff>:/oxygen/document-save.png</normaloff>:/oxygen/document-save.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+S</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="spellcheckButton">
+        <property name="text">
+         <string>Check Spell (Ctrl + h)</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/icons/icons.qrc">
+          <normaloff>:/oxygen/tools-check-spelling.png</normaloff>:/oxygen/tools-check-spelling.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+H</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="textToSpeech">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QToolButton" name="preferencesButton">
+        <property name="toolTip">
+         <string>Preferences</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/icons/icons.qrc">
+          <normaloff>:/oxygen/configure.png</normaloff>:/oxygen/configure.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="aboutButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/icons/icons.qrc">
+          <normaloff>:/oxygen/help-about.png</normaloff>:/oxygen/help-about.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="exitButton">
+        <property name="toolTip">
+         <string>Exit</string>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>exit</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../resources/icons/icons.qrc">
+          <normaloff>:/oxygen/application-exit.png</normaloff>:/oxygen/application-exit.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTextEdit" name="content"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../resources/icons/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
