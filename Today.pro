@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network multimedia
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -70,7 +70,9 @@ SOURCES += \
     src/registry.cpp \
     src/smart_quotes.cpp \
     src/today.cpp \
-    src/spell_checker.cpp
+    src/spell_checker.cpp \
+    src/contentprovider.cpp \
+    src/utility.cpp
 
 HEADERS  += \
     src/about.h \
@@ -80,7 +82,9 @@ HEADERS  += \
     src/today.h \
     src/smart_quotes.h \
     src/GoogleSpeech.h \
-    src/googlespeech_globals.h
+    src/googlespeech_globals.h \
+    src/contentprovider.h \
+    src/utility.h
 
 FORMS    += \
     src/about.ui \

@@ -27,7 +27,6 @@
 #include "spell_checker.h"
 #include "dictionary_manager.h"
 #include "preferences.h"
-#include "googlespeech.h"
 #include <QSettings>
 #include <QDir>
 #include <QProcess>
@@ -44,11 +43,13 @@ Today::Today(QWidget *parent) :
     calendar->hide();
     tempFile = new QFile("temporary_file.html");
 
+    // Connect the calendar signals
     connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateChanged(QDate)));
 
     reg = new Registry(ui->content);
     reg->openRegistry();
 
+    // Load user preferences
     loadSettings();
 
 //    if (!reg->openRegistry())
@@ -57,11 +58,17 @@ Today::Today(QWidget *parent) :
 //                             tr("Error opening database. Changes will be not saved"),
 //                             QMessageBox::Ok);
 
+    // Set the focus on the main widget
     ui->content->setFocus();
 
+    // Flag to save the content
     maybeSave = false;
+
+    // Set the current date
     onDateChanged(QDate::currentDate());
 
+    // Some other stuff
+    this->ui->labelDate->setText(QDate::currentDate().toString("dddd '-' dd/MM/yyyy"));
     this->setWindowTitle(tr("Today - Write your experiencies"));
     this->setWrittenDays();
 }
