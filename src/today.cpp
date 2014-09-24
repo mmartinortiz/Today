@@ -261,10 +261,10 @@ void Today::on_aboutButton_clicked()
     dialog->exec();
 }
 
-void Today::on_textToSpeech_clicked()
-{
-    GoogleSpeech *speech = new GoogleSpeech("english");
-    speech->speech(ui->content->toPlainText());
+//void Today::on_textToSpeech_clicked()
+//{
+//    GoogleSpeech *speech = new GoogleSpeech("english");
+//    speech->speech(ui->content->toPlainText());
 
 //    if (tempFile->open(QIODevice::ReadWrite)) {
 //        QTextStream out(tempFile);
@@ -278,4 +278,4 @@ void Today::on_textToSpeech_clicked()
 
 //    QProcess *chromeProcess = new QProcess(this);
 //    chromeProcess->start(chrome, arguments);
-}
+//}

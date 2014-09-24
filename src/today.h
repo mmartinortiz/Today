@@ -57,8 +57,6 @@ private slots:
 
     void on_aboutButton_clicked();
 
-    void on_textToSpeech_clicked();
-
 protected:
     void closeEvent(QCloseEvent *);
 

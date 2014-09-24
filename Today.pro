@@ -70,8 +70,7 @@ SOURCES += \
     src/registry.cpp \
     src/smart_quotes.cpp \
     src/today.cpp \
-    src/spell_checker.cpp \
-    src/googlespeech.cpp
+    src/spell_checker.cpp
 
 HEADERS  += \
     src/about.h \
@@ -80,7 +79,6 @@ HEADERS  += \
     src/spell_checker.h \
     src/today.h \
     src/smart_quotes.h \
-    src/googlespeech.h \
     src/GoogleSpeech.h \
     src/googlespeech_globals.h
 
