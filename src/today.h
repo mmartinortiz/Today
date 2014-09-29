@@ -27,6 +27,7 @@
 #include <QFile>
 #include "registry.h"
 #include "dictionary.h"
+#include "contentprovider.h"
 
 namespace Ui {
 class TodayWindow;
@@ -41,13 +42,9 @@ public:
     ~Today();
     
 private slots:
-    void on_saveButton_clicked();
-
     void onDateChanged(const QDate &date);
 
     void on_exitButton_clicked();
-
-    void on_content_textChanged();
 
     void on_spellcheckButton_clicked();
 
@@ -62,18 +59,18 @@ protected:
 
 private:
     Ui::TodayWindow *ui;
-    Registry *reg;
-    int currentId;
-    QDate currentDate;
+    ContentProvider *provider;
+    QDate mCurrentDate;
     QString currentDic;
-    bool maybeSave;
 
     Dictionary mDictionary;
     QCalendarWidget *calendar;
-    QFile *tempFile;
 
-    void maybeSaveDialog();
+    void save();
+    void load(QDate date);
+
     void setWrittenDays();
+    void setLabelDate(QDate date);
 
     void loadSettings();
     void saveSettings();

@@ -52,6 +52,11 @@ QString Preferences::getSpellLanguage()
     return ui->dic->currentText();
 }
 
+QFont Preferences::getFontFamily()
+{
+    return ui->fontComboBox->currentFont();
+}
+
 void Preferences::setDictionaries(QStringList dics)
 {
     ui->dic->addItems(dics);

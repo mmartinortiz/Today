@@ -67,7 +67,6 @@ SOURCES += \
     src/about.cpp \
     src/main.cpp \
     src/preferences.cpp \
-    src/registry.cpp \
     src/smart_quotes.cpp \
     src/today.cpp \
     src/spell_checker.cpp \
@@ -77,7 +76,6 @@ SOURCES += \
 HEADERS  += \
     src/about.h \
     src/preferences.h \
-    src/registry.h \
     src/spell_checker.h \
     src/today.h \
     src/smart_quotes.h \

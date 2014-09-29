@@ -9,20 +9,30 @@ class ContentProvider
 {
 public:
     ContentProvider();
+    ~ContentProvider();
 
     bool setContentOrigin(QString origin);
-    bool save();
-    bool load(QDate date);
+    bool save(QDate date, QString content);
+    QString load(QDate date);
+    bool clean(QDate date);
 
     QList<QDate> getHistoryByMonth(int month, int year);
 
 private:
-    const QString LOG_TAG = "ContentProvider";
-    const QString SQL_CREATE_ENTRIES = "CREATE TABLE Entries (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, date TEXT NOT NULL, content TEXT)";
-    const QString SQL_CREATE_SEQUENCE = "CREATE TABLE sqlite_sequence(name,seq);";
+    static const QString LOG_TAG;
+    static const QString SQL_CREATE_ENTRIES;
+    static const QString SQL_CREATE_SEQUENCE;
 
     QSqlDatabase mDataBase;
     QString mDataBaseName;
+
+    bool createTables(QSqlDatabase database);
+    bool checkTables(QSqlDatabase database);
+    int createNewEntry(QDate date);
+    bool clean(int id);
+    bool update(int id, QString content);
+    QString load(int id);
+    int getIdByDate(QDate date);
 };
 
 #endif // CONTENTPROVIDER_H

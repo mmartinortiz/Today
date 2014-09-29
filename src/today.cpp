@@ -27,6 +27,7 @@
 #include "spell_checker.h"
 #include "dictionary_manager.h"
 #include "preferences.h"
+#include "utility.h"
 #include <QSettings>
 #include <QDir>
 #include <QProcess>
@@ -37,40 +38,32 @@ Today::Today(QWidget *parent) :
     ui(new Ui::TodayWindow)
 {
     ui->setupUi(this);
+
+    // Set up calendar widget
     ui->dateSelector->setCheckable(true);
     calendar = new QCalendarWidget(this);
     calendar->setFirstDayOfWeek(Qt::Monday);
     calendar->hide();
-    tempFile = new QFile("temporary_file.html");
 
     // Connect the calendar signals
     connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateChanged(QDate)));
 
-    reg = new Registry(ui->content);
-    reg->openRegistry();
+    // Prepare content provider
+    provider = new ContentProvider();
+    provider->setContentOrigin("today");
 
     // Load user preferences
     loadSettings();
 
-//    if (!reg->openRegistry())
-//        QMessageBox::warning(this,
-//                             tr("Today"),
-//                             tr("Error opening database. Changes will be not saved"),
-//                             QMessageBox::Ok);
-
     // Set the focus on the main widget
     ui->content->setFocus();
 
-    // Flag to save the content
-    maybeSave = false;
-
     // Set the current date
-    onDateChanged(QDate::currentDate());
+    load(QDate::currentDate());
 
     // Some other stuff
-    this->ui->labelDate->setText(QDate::currentDate().toString("dddd '-' dd/MM/yyyy"));
-    this->setWindowTitle(tr("Today - Write your experiencies"));
-    this->setWrittenDays();
+    setLabelDate(QDate::currentDate());
+    setWindowTitle(tr("Today - Write your experiencies"));
 }
 
 Today::~Today()
@@ -78,61 +71,57 @@ Today::~Today()
     delete ui;
 }
 
-void Today::on_saveButton_clicked()
+void Today::save()
 {
-    QString content = ui->content->toHtml();
-
-    switch (currentId) {
-    case 0:
-        // New registry
-        currentId = reg->newEntry(currentDate, content);
-        maybeSave = false;
-        break;
-    default:
-        if (reg->updateEntry(currentId, content)) maybeSave = false;
-        break;
+    // If the content is empty, the database entry is cleaned
+    if (ui->content->toPlainText().length() == 0) {
+        provider->clean(mCurrentDate);
+    } else {
+        QString content = ui->content->toHtml();
+        provider->save(mCurrentDate, content);
     }
+}
 
-    if (!maybeSave)
-        ui->saveButton->setEnabled(false);
+void Today::load(QDate date)
+{
+    // Set the current date
+    mCurrentDate = date;
 
-    return;
+    // Get current date content
+    QString content = provider->load(mCurrentDate);
+
+    // Setting current content
+    ui->content->setText(content);
+    ui->content->setFocus();
+    ui->dateSelector->setChecked(false);
+
+    // Setting date label
+    setLabelDate(date);
 }
 
 void Today::closeEvent(QCloseEvent *)
 {
-    on_exitButton_clicked();
-}
-
-void Today::maybeSaveDialog()
-{
-    QMessageBox *dialog = new QMessageBox();
-
-    dialog->setText(tr("The content has been modified."));
-    dialog->setInformativeText(tr("Do you want to save the changes?"));
-    dialog->setStandardButtons(QMessageBox::Save | QMessageBox::Discard);
-    dialog->setDefaultButton(QMessageBox::Save);
-    int ret = dialog->exec();
-
-    switch (ret) {
-    case QMessageBox::Save:
-        on_saveButton_clicked();
-        break;
-    default:
-        break;
-    }
+    // Saving changes
+    save();
 }
 
 void Today::setWrittenDays()
 {
+    // The calendar shows the days with entries with a green background
     QTextCharFormat format;
     format.setBackground(QBrush(Qt::green));
-    QList<QDate> dates = reg->getHistoryByMonth(calendar->monthShown(), calendar->yearShown());
-    for (int i = 0; i < dates.size(); i++)
-    {
+
+    // Getting the entries for the current month from the provider
+    QList<QDate> dates = provider->getHistoryByMonth(calendar->monthShown(), calendar->yearShown());
+    for (int i = 0; i < dates.size(); i++) {
         calendar->setDateTextFormat(dates.at(i), format);
     }
 
+}
+
+void Today::setLabelDate(QDate date)
+{
+    ui->labelDate->setText(date.toString("dddd '-' dd/MM/yyyy"));
 }
 
 void Today::loadSettings()
@@ -148,16 +137,6 @@ void Today::loadSettings()
     if (settings.contains("SpellLanguage"))
         currentDic = settings.value("SpellLanguage").toString();
     this->dictionaryChanged();
-
-//    QString dbName = QDir::currentPath() + "today.db";
-//    if (settings.contains("DataBase"))
-//        dbName = settings.value("DataBase").toString();
-//    if (!reg->setDatabase(dbName))
-//        QMessageBox::warning(this,
-//                             tr("Today"),
-//                             tr("Error opening database. Changes will be not saved"),
-//                             QMessageBox::Ok);;
-
 }
 
 void Today::saveSettings()
@@ -171,33 +150,19 @@ void Today::saveSettings()
 
 void Today::onDateChanged(const QDate &date)
 {
-    if (maybeSave)
-        maybeSaveDialog();
+    // Save previous content
+    save();
 
-    currentId = reg->loadEntry(date);
-    currentDate = calendar->selectedDate();
-    ui->content->setFocus();
-    maybeSave = false;
-    ui->dateSelector->setChecked(false);
+    // Load new content
+    load(date);
 }
 
 void Today::on_exitButton_clicked()
 {
-    // Save Dialog
-    if (maybeSave)
-        maybeSaveDialog();
+    save();
 
-    reg->close();
     this->saveSettings();
-    tempFile->remove();
     exit(0);
-}
-
-void Today::on_content_textChanged()
-{
-    if (!ui->saveButton->isEnabled())
-        ui->saveButton->setEnabled(true);
-    maybeSave = true;
 }
 
 void Today::on_spellcheckButton_clicked()
@@ -207,6 +172,7 @@ void Today::on_spellcheckButton_clicked()
 
 void Today::on_dateSelector_toggled(bool checked)
 {
+    setWrittenDays();
     if (checked)
     {
         QRect calendar_geometry = calendar->geometry();
@@ -234,16 +200,38 @@ void Today::on_preferencesButton_clicked()
     // Show dialog
     dialog->exec();
 
-    // Update values
-    int newSize = dialog->getFontSize();
+    // Update font values
+    int currentPosition = ui->content->textCursor().position();
+
+    QFont newFont = dialog->getFontFamily();
+    newFont.setPointSize(dialog->getFontSize());
+
+    ui->content->selectAll();
+    ui->content->setFont(newFont);
+    ui->content->textCursor().setPosition(currentPosition);
+
+    // Font size
+    /*int newSize = dialog->getFontSize();
     if (newSize != ui->content->fontPointSize())
     {
+        int currentPosition = ui->content->textCursor().position();
+
         ui->content->selectAll();
         ui->content->setFontPointSize(newSize);
-        QTextCursor cursor = ui->content->textCursor();
-        cursor.setPosition(QTextCursor::End);
-        ui->content->setTextCursor(cursor);
+        ui->content->textCursor().setPosition(currentPosition);
+//        cursor.setPosition(QTextCursor::End);
+//        ui->content->setTextCursor(cursor);
     }
+
+    // Font Family
+    QFont newFont = dialog->getFontFamily();
+    if (newFont != ui->content->currentFont()) {
+        int currentPosition = ui->content->textCursor().position();
+
+        ui->content->selectAll();
+        ui->content->setCurrentFont(newFont);
+        ui->content->textCursor().setPosition(currentPosition);
+    }*/
 
     if (currentDic != dialog->getSpellLanguage())
     {
@@ -267,22 +255,3 @@ void Today::on_aboutButton_clicked()
     dialog->setModal(true);
     dialog->exec();
 }
-
-//void Today::on_textToSpeech_clicked()
-//{
-//    GoogleSpeech *speech = new GoogleSpeech("english");
-//    speech->speech(ui->content->toPlainText());
-
-//    if (tempFile->open(QIODevice::ReadWrite)) {
-//        QTextStream out(tempFile);
-//        out << ui->content->toHtml();
-//        tempFile->close();
-//    }
-//    QString chrome = "/usr/bin/chromium-browser";
-//    QStringList arguments;
-//    arguments << "";
-//    arguments << tempFile->fileName();
-
-//    QProcess *chromeProcess = new QProcess(this);
-//    chromeProcess->start(chrome, arguments);
-//}

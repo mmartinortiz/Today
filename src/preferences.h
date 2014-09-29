@@ -37,6 +37,7 @@ public:
     int getFontSize();
     void setFontSize(int value);
     QString getSpellLanguage();
+    QFont getFontFamily();
 
     void setDictionaries(QStringList dics);
     void setCurrentDic(QString dic);
