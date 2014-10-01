@@ -53,6 +53,8 @@ private slots:
 
     void on_aboutButton_clicked();
 
+    void setCalendarBackground(int year, int month);
+
 protected:
     void closeEvent(QCloseEvent *);
 
@@ -71,7 +73,7 @@ private:
 
     void cleanCalendarBackground(QDate date);
 
-    void setCalendarBackground();
+
     void setLabelDate(QDate date);
 
     void loadSettings();

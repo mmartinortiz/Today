@@ -54,7 +54,7 @@ bool ContentProvider::setContentOrigin(QString origin)
         Utility::log(LOG_TAG, mDataBase.lastError().databaseText());
         return false;
     } else {
-        Utility::log(LOG_TAG, "Database opened");
+//        Utility::log(LOG_TAG, "Database opened");
     }
 
     if (mDataBase.tables().isEmpty()) {
@@ -165,7 +165,7 @@ bool ContentProvider::createTables(QSqlDatabase database)
         return false;
 
     // Create the tables
-    Utility::log(LOG_TAG, "Creating tables...");
+//    Utility::log(LOG_TAG, "Creating tables...");
     QStringList queries;
     queries << SQL_CREATE_ENTRIES;
     queries << SQL_CREATE_SEQUENCE;
@@ -182,7 +182,7 @@ bool ContentProvider::createTables(QSqlDatabase database)
 
 bool ContentProvider::checkTables(QSqlDatabase database)
 {
-    Utility::log(LOG_TAG, "Checking database...");
+//    Utility::log(LOG_TAG, "Checking database...");
     bool success = true;
 
     if(!database.isOpen())
@@ -221,7 +221,7 @@ bool ContentProvider::checkTables(QSqlDatabase database)
         success = false;
     }
 
-    Utility::log(LOG_TAG, "Database check result: " + QString::number(success));
+//    Utility::log(LOG_TAG, "Database check result: " + QString::number(success));
     return success;
 }
 
@@ -251,7 +251,7 @@ int ContentProvider::createNewEntry(QDate date)
 
 bool ContentProvider::clean(int id)
 {
-    Utility::log(LOG_TAG, "Cleaning entry");
+//    Utility::log(LOG_TAG, "Cleaning entry");
     bool success = false;
     if (!mDataBase.isOpen())
         return success;

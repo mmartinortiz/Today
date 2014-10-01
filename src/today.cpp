@@ -48,6 +48,7 @@ Today::Today(QWidget *parent) :
 
     // Connect the calendar signals
     connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateChanged(QDate)));
+    connect(calendar, SIGNAL(currentPageChanged(int,int)), this, SLOT(setCalendarBackground(int,int)));
 
     // Prepare content provider
     provider = new ContentProvider();
@@ -120,16 +121,20 @@ void Today::closeEvent(QCloseEvent *)
     save();
 }
 
-void Today::setCalendarBackground()
+void Today::setCalendarBackground(int year, int month)
 {
     // The calendar shows the days with entries with a green background
     QTextCharFormat format;
     format.setBackground(QBrush(Qt::green));
 
     // Getting the entries for the current month from the provider
-    QList<QDate> dates = provider->getHistoryByMonth(calendar->monthShown(), calendar->yearShown());
-    for (int i = 0; i < dates.size(); i++) {
-        calendar->setDateTextFormat(dates.at(i), format);
+    for (int j = -1;j <2; j++) {
+        // Take care of the previous and later month, as probably the
+        // current view contains days from these months
+        QList<QDate> dates = provider->getHistoryByMonth(month + j, year);
+        for (int i = 0; i < dates.size(); i++) {
+            calendar->setDateTextFormat(dates.at(i), format);
+        }
     }
 
 }
@@ -206,7 +211,7 @@ void Today::on_spellcheckButton_clicked()
 
 void Today::on_dateSelector_toggled(bool checked)
 {
-    setCalendarBackground();
+    setCalendarBackground(calendar->yearShown(), calendar->monthShown());
     if (checked)
     {
         QRect calendar_geometry = calendar->geometry();
