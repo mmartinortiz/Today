@@ -25,7 +25,6 @@
 #include <QDate>
 #include <QCalendarWidget>
 #include <QFile>
-#include "registry.h"
 #include "dictionary.h"
 #include "contentprovider.h"
 
@@ -63,13 +62,16 @@ private:
     QDate mCurrentDate;
     QString currentDic;
 
+    QFont mFont;
     Dictionary mDictionary;
     QCalendarWidget *calendar;
 
     void save();
     void load(QDate date);
 
-    void setWrittenDays();
+    void cleanCalendarBackground(QDate date);
+
+    void setCalendarBackground();
     void setLabelDate(QDate date);
 
     void loadSettings();

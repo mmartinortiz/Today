@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QProcess>
 #include <QTemporaryFile>
+#include <QFontDialog>
 
 Today::Today(QWidget *parent) :
     QMainWindow(parent),
@@ -75,9 +76,13 @@ void Today::save()
 {
     // If the content is empty, the database entry is cleaned
     if (ui->content->toPlainText().length() == 0) {
+        // Clean the database entry
         provider->clean(mCurrentDate);
+
+        // Clean date background on calendar
+        cleanCalendarBackground(mCurrentDate);
     } else {
-        QString content = ui->content->toHtml();
+        QString content = ui->content->toPlainText();
         provider->save(mCurrentDate, content);
     }
 }
@@ -93,10 +98,20 @@ void Today::load(QDate date)
     // Setting current content
     ui->content->setText(content);
     ui->content->setFocus();
+    ui->content->setFont(mFont);
     ui->dateSelector->setChecked(false);
 
     // Setting date label
     setLabelDate(date);
+}
+
+void Today::cleanCalendarBackground(QDate date)
+{
+    // Restore background color
+    QTextCharFormat format;
+    format.setBackground(QBrush(Qt::white));
+
+    calendar->setDateTextFormat(date, format);
 }
 
 void Today::closeEvent(QCloseEvent *)
@@ -105,7 +120,7 @@ void Today::closeEvent(QCloseEvent *)
     save();
 }
 
-void Today::setWrittenDays()
+void Today::setCalendarBackground()
 {
     // The calendar shows the days with entries with a green background
     QTextCharFormat format;
@@ -121,30 +136,50 @@ void Today::setWrittenDays()
 
 void Today::setLabelDate(QDate date)
 {
+    // Set the main window label with the selected date
     ui->labelDate->setText(date.toString("dddd '-' dd/MM/yyyy"));
 }
 
 void Today::loadSettings()
 {
-    QSettings settings("A Bit World", "Today");
+    // Load few settings
+    QSettings s("A Bit World", "Today");
 
-    int fs = 12;
-    if (settings.contains("FontSize"))
-        fs = settings.value("FontSize").toInt();
-    ui->content->setFontPointSize(fs);
+    // Load font parameters
+    mFont.setFamily(s.value("font.family", "Arial").toString());
+    mFont.setPointSize(s.value("font.size", 10).toInt());
+    mFont.setBold(s.value("font.bold", false).toBool());
+    mFont.setItalic(s.value("font.italic", false).toBool());
+    ui->content->setFont(mFont);
 
+    QSize size;
+    size.setWidth(s.value("window.size.width", 580).toInt());
+    size.setHeight(s.value("window.size.height", 400).toInt());
+
+    ui->content->resize(size);
+
+    // @TODO: This will be modified in future
     currentDic = "en";
-    if (settings.contains("SpellLanguage"))
-        currentDic = settings.value("SpellLanguage").toString();
+    if (s.contains("SpellLanguage"))
+        currentDic = s.value("SpellLanguage").toString();
     this->dictionaryChanged();
 }
 
 void Today::saveSettings()
 {
-    QSettings settings("A Bit World", "Today");
+    QSettings s("A Bit World", "Today");
 
-    settings.setValue("FontSize", ui->content->fontPointSize());
-    settings.setValue("SpellLanguage", currentDic);
+    // Save font parameters
+    s.setValue("font.family", mFont.family());
+    s.setValue("font.size", mFont.pointSize());
+    s.setValue("font.italic", mFont.italic());
+    s.setValue("font.bold", mFont.bold());
+
+    s.setValue("window.size.width", ui->content->size().width());
+    s.setValue("window.size.height", ui->content->size().height());
+
+    // @TODO: This will be modified in future
+    s.setValue("SpellLanguage", currentDic);
 
 }
 
@@ -172,7 +207,7 @@ void Today::on_spellcheckButton_clicked()
 
 void Today::on_dateSelector_toggled(bool checked)
 {
-    setWrittenDays();
+    setCalendarBackground();
     if (checked)
     {
         QRect calendar_geometry = calendar->geometry();
@@ -190,55 +225,16 @@ void Today::on_dateSelector_toggled(bool checked)
 
 void Today::on_preferencesButton_clicked()
 {
-    Preferences *dialog = new Preferences(this);
+    mFont = QFontDialog::getFont(0, this);
+    ui->content->setFont(mFont);
 
-    // Load current values
-    dialog->setFontSize(ui->content->fontPointSize());
-    dialog->setDictionaries(DictionaryManager::instance().availableDictionaries());
-    dialog->setCurrentDic(currentDic);
-
-    // Show dialog
-    dialog->exec();
-
-    // Update font values
-    int currentPosition = ui->content->textCursor().position();
-
-    QFont newFont = dialog->getFontFamily();
-    newFont.setPointSize(dialog->getFontSize());
-
-    ui->content->selectAll();
-    ui->content->setFont(newFont);
-    ui->content->textCursor().setPosition(currentPosition);
-
-    // Font size
-    /*int newSize = dialog->getFontSize();
-    if (newSize != ui->content->fontPointSize())
-    {
-        int currentPosition = ui->content->textCursor().position();
-
-        ui->content->selectAll();
-        ui->content->setFontPointSize(newSize);
-        ui->content->textCursor().setPosition(currentPosition);
-//        cursor.setPosition(QTextCursor::End);
-//        ui->content->setTextCursor(cursor);
-    }
-
-    // Font Family
-    QFont newFont = dialog->getFontFamily();
-    if (newFont != ui->content->currentFont()) {
-        int currentPosition = ui->content->textCursor().position();
-
-        ui->content->selectAll();
-        ui->content->setCurrentFont(newFont);
-        ui->content->textCursor().setPosition(currentPosition);
-    }*/
-
+    /*
     if (currentDic != dialog->getSpellLanguage())
     {
         currentDic = dialog->getSpellLanguage();
         this->dictionaryChanged();
     }
-
+*/
 }
 
 
