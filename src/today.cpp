@@ -152,11 +152,9 @@ void Today::loadSettings()
     mFont.setItalic(s.value("font.italic", false).toBool());
     ui->content->setFont(mFont);
 
-    QSize size;
-    size.setWidth(s.value("window.size.width", 580).toInt());
-    size.setHeight(s.value("window.size.height", 400).toInt());
-
-    ui->content->resize(size);
+    // Restore Geometry
+    restoreGeometry(s.value("window.geometry").toByteArray());
+    restoreState(s.value("window.state").toByteArray());
 
     // @TODO: This will be modified in future
     currentDic = "en";
@@ -175,8 +173,9 @@ void Today::saveSettings()
     s.setValue("font.italic", mFont.italic());
     s.setValue("font.bold", mFont.bold());
 
-    s.setValue("window.size.width", ui->content->size().width());
-    s.setValue("window.size.height", ui->content->size().height());
+    // Save Geometry
+    s.setValue("window.geometry", saveGeometry());
+    s.setValue("window.state", saveState());
 
     // @TODO: This will be modified in future
     s.setValue("SpellLanguage", currentDic);
