@@ -33,6 +33,7 @@
 #include <QProcess>
 #include <QTemporaryFile>
 #include <QFontDialog>
+#include <QTimer>
 
 Today::Today(QWidget *parent) :
     QMainWindow(parent),
@@ -46,9 +47,14 @@ Today::Today(QWidget *parent) :
     calendar->setFirstDayOfWeek(Qt::Monday);
     calendar->hide();
 
+    // Set up the timer
+    mTimer = new QTimer(this);
+
     // Connect the calendar signals
     connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateChanged(QDate)));
     connect(calendar, SIGNAL(currentPageChanged(int,int)), this, SLOT(setCalendarBackground(int,int)));
+    connect(ui->content, SIGNAL(textChanged()), this, SLOT(onTextChanged()));
+    connect(mTimer, SIGNAL(timeout()), this, SLOT(onTimeout()));
 
     // Prepare content provider
     provider = new ContentProvider();
@@ -59,6 +65,7 @@ Today::Today(QWidget *parent) :
 
     // Set the focus on the main widget
     ui->content->setFocus();
+    ui->content->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // Set the current date
     load(QDate::currentDate());
@@ -137,6 +144,21 @@ void Today::setCalendarBackground(int year, int month)
         }
     }
 
+}
+
+void Today::onTextChanged()
+{
+    // After the text is changed the timer starts with an interval
+    // of 5sec
+    mTimer->start(5000);
+    qDebug() << "restarting timer";
+}
+
+void Today::onTimeout()
+{
+    qDebug() << "timeout";
+    save();
+    mTimer->stop();
 }
 
 void Today::setLabelDate(QDate date)

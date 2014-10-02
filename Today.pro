@@ -79,8 +79,6 @@ HEADERS  += \
     src/spell_checker.h \
     src/today.h \
     src/smart_quotes.h \
-    src/GoogleSpeech.h \
-    src/googlespeech_globals.h \
     src/contentprovider.h \
     src/utility.h
 
@@ -98,3 +96,6 @@ RESOURCES += \
     resources/icons/icons.qrc
 
 TRANSLATIONS = translations/today_es.ts
+
+OTHER_FILES += \
+    README.md

@@ -25,6 +25,7 @@
 #include <QDate>
 #include <QCalendarWidget>
 #include <QFile>
+#include <QTimer>
 #include "dictionary.h"
 #include "contentprovider.h"
 
@@ -55,6 +56,10 @@ private slots:
 
     void setCalendarBackground(int year, int month);
 
+    void onTextChanged();
+
+    void onTimeout();
+
 protected:
     void closeEvent(QCloseEvent *);
 
@@ -67,6 +72,7 @@ private:
     QFont mFont;
     Dictionary mDictionary;
     QCalendarWidget *calendar;
+    QTimer *mTimer;
 
     void save();
     void load(QDate date);
