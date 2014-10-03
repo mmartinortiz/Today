@@ -49,6 +49,7 @@ Today::Today(QWidget *parent) :
 
     // Set up the timer
     mTimer = new QTimer(this);
+    timerRestarted = 0;
 
     // Connect the calendar signals
     connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(onDateChanged(QDate)));
@@ -151,12 +152,16 @@ void Today::onTextChanged()
     // After the text is changed the timer starts with an interval
     // of 5sec
     mTimer->start(5000);
-    qDebug() << "restarting timer";
+    timerRestarted++;
+    if (timerRestarted == 10) {
+        // Every 10 times we restart the timer, we save the changes.
+        save();
+        timerRestarted = 0;
+    }
 }
 
 void Today::onTimeout()
 {
-    qDebug() << "timeout";
     save();
     mTimer->stop();
 }

@@ -73,6 +73,7 @@ private:
     Dictionary mDictionary;
     QCalendarWidget *calendar;
     QTimer *mTimer;
+    int timerRestarted;
 
     void save();
     void load(QDate date);
